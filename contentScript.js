@@ -2,6 +2,7 @@
 const searchText = "specific text";
 
 // Check if the text is present in the body of the page
+// TODO Highlight the matched cards
 if (document.body.innerText.includes(searchText)) {
   console.log(`The text "${searchText}" was found on this page!`);
   alert(`The text "${searchText}" was found!`);
