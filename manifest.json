@@ -8,27 +8,19 @@
         "scripting"              
     ],
     "action": {
-        "default_popup": "popup/popup.html",  
-        "default_icon": {
-        "16": "images/icon16.png",
-        "48": "images/icon48.png",
-        "128": "images/icon128.png"
-        }
+        "default_popup": "popup/popup.html"
+    
     },
     "background": {
         "service_worker": "background.js"    
     },
     "content_scripts": [
         {
-        "matches": ["https://google.com/*"],          
+        "matches": ["https://hemnet.se/*"],          
         "js": ["contentScript.js"],         
         "run_at": "document_idle"            
         }
-    ],
-    "icons": {
-        "16": "images/icon16.png",
-        "48": "images/icon48.png",
-        "128": "images/icon128.png"
-    }
+    ]
+    
 }
   
