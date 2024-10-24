@@ -16,7 +16,7 @@
     },
     "content_scripts": [
         {
-        "matches": ["https://hemnet.se/*"],          
+        "matches": ["https://hemnet.se/*"],        
         "js": ["contentScript.js"],         
         "run_at": "document_idle"            
         }
