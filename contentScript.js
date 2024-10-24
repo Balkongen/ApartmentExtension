@@ -1,88 +1,69 @@
-let lastURL = window.location.href; // Store the initial URL
+console.log("contentScript.js loaded");
 
-function searchPage() {
-    console.log("Script is running");
-    const cards = document.getElementsByClassName("Card_hclCard__v27k7");
-    
-    if (cards.length === 0) {
-        console.log("No cards");
-        return; // Exit if there are no cards
-    }
+if (typeof observer === "undefined") {
+  var observer; // Use var to avoid block scope issues
 
-    for (const card of cards) {
-        const p = card.getElementsByTagName("p");
+  function searchPage() {
+      console.log("Script is running");
+      const cards = document.getElementsByClassName("Card_hclCard__v27k7");
 
-        if (p.length === 0) continue; // No text, skip card.
+      if (cards.length === 0) {
+          console.log("No cards found");
+          return; // Exit if there are no cards
+      }
 
-        const text = p[0].textContent;
+      for (const card of cards) {
+          const p = card.getElementsByTagName("p");
+          if (p.length === 0) continue; // No text, skip card.
 
-        if (classifyApartmentRenovation(text)) {
-            card.firstElementChild.style.border = "5px solid red"; 
-        } else {
-            card.firstElementChild.style.display = "none";
-        }
-    }
+          const text = p[0].textContent;
+
+          if (classifyApartmentRenovation(text)) {
+              card.firstElementChild.style.border = "5px solid red"; 
+          } else {
+              card.firstElementChild.style.display = "none";
+          }
+      }
+  }
+
+  function classifyApartmentRenovation(description) {
+      const needsRenovationKeywords = [
+          "sliten", "omodern", "behöver renoveras",
+          "totalrenovering krävs", "i behov av uppfräschning",
+          "slitage", "ytskikt behöver åtgärdas", "behov av upprustning", "ej renoverad",
+          "omfattande renovering(?!ar)",
+          "behöver uppdateras", "i behov av modernisering",
+          "äldre standard", "behöver fixas till",
+          "i behov av stambyte", "byggnadsår utan större renovering",
+          "behov av renovering", "renoveringschans",
+          "renoveringspotential", "renoveringsbehov",
+          "renoveringsobjekt", "renoveringsdröm"
+      ];
+
+      const needsRenovationKeywordsEscaped = needsRenovationKeywords.map(keyword =>
+          keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // Escape special characters
+      );
+
+      const needsRenovationPattern = new RegExp(
+          "(" + needsRenovationKeywordsEscaped.join("|") + ")", 
+          "i" // Case insensitive flag
+      );
+
+      return needsRenovationPattern.test(description);
+  }
+
+  // Run the search function when the script is injected
+  setTimeout(() => {
+      searchPage();
+  }, 1); // Delay the search for 1 second
+
+  // Observe DOM changes to capture dynamically added elements
+  observer = new MutationObserver(() => {
+      console.log("DOM changed, running searchPage");
+      searchPage(); // Re-run the search whenever the DOM changes
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+} else {
+  console.log("Observer already initialized. Skipping reinitialization.");
 }
-
-function classifyApartmentRenovation(description) {
-    const needsRenovationKeywords = [
-        "sliten", "omodern", "behöver renoveras",
-        "totalrenovering krävs", "i behov av uppfräschning",
-        "slitage", "ytskikt behöver åtgärdas", "behov av upprustning", "ej renoverad",
-        "omfattande renovering(?!ar)",
-        "behöver uppdateras", "i behov av modernisering",
-        "äldre standard", "behöver fixas till",
-        "i behov av stambyte", "byggnadsår utan större renovering",
-        "behov av renovering", "renoveringschans",
-        "renoveringspotential", "renoveringsbehov",
-        "renoveringsobjekt", "renoveringsdröm"
-    ];
-
-    const needsRenovationKeywordsEscaped = needsRenovationKeywords.map(keyword =>
-        keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // Escape special characters
-    );
-
-    // Create the regex pattern by combining the keywords
-    const needsRenovationPattern = new RegExp(
-        "(" + needsRenovationKeywordsEscaped.join("|") + ")", 
-        "i" // Case insensitive flag
-    );
-
-    // Return true if any of the keywords are found in the description
-    return needsRenovationPattern.test(description);
-}
-
-// Function to check for URL changes
-function checkURLChange() {
-    const currentURL = window.location.href;
-    if (currentURL !== lastURL) {
-        console.log("URL changed: " + currentURL);
-        lastURL = currentURL; // Update the last URL
-        searchPage(); // Run the search function directly
-    }
-}
-
-// Observe the DOM for changes
-function observeDOMChanges() {
-    console.log("Starting to observe DOM changes...");
-    const targetNode = document.body;
-
-    const observer = new MutationObserver((mutationsList) => {
-        // Check for URL changes on DOM mutations
-        checkURLChange();
-
-        for (const mutation of mutationsList) {
-            if (mutation.type === 'childList' || mutation.type === 'subtree') {
-                // Optionally, you can call searchPage() here if you want it to run on every DOM change
-                searchPage(); 
-            }
-        }
-    });
-
-    const config = { childList: true, subtree: true };
-    observer.observe(targetNode, config);
-}
-
-// Initialize the search and DOM observer
-searchPage();
-observeDOMChanges();

@@ -5,22 +5,17 @@
     "description": "A simple Chrome extension example.",
     "permissions": [
         "activeTab",
-        "scripting"              
+        "scripting",
+        "webNavigation"
     ],
-    "action": {
-        "default_popup": "popup/popup.html"
-    
-    },
     "background": {
         "service_worker": "background.js"    
     },
     "content_scripts": [
         {
-        "matches": ["https://hemnet.se/*"],        
-        "js": ["contentScript.js"],         
-        "run_at": "document_idle"            
+            "matches": ["https://hemnet.se/*"],        
+            "js": ["contentScript.js"],         
+            "run_at": "document_idle"            
         }
     ]
-    
 }
-  
