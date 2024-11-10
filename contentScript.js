@@ -14,19 +14,26 @@ if (typeof observer === "undefined") {
 
       for (const card of cards) {
           const p = card.getElementsByTagName("p");
-          if (p.length === 0) continue; // No text, skip card.
+          if (p.length === 0) 
+            continue; // No text, skip card.
 
           const text = p[0].textContent;
 
-          if (classifyApartmentRenovation(text)) {
+          if (isApartmentInNeedOfRenovation(text)) {
               card.firstElementChild.style.border = "5px solid red"; 
           } else {
-              card.firstElementChild.style.display = "none";
+              hideElement(card);
           }
       }
   }
 
-  function classifyApartmentRenovation(description) {
+  function hideElement(element) {
+    element.nextElementSibling.style.display = "none";
+    element.style.display = "none";
+    element.firstElementChild.style.display = "none";
+  }
+
+  function isApartmentInNeedOfRenovation(description) {
       const needsRenovationKeywords = [
           "sliten", "omodern", "behöver renoveras",
           "totalrenovering krävs", "i behov av uppfräschning",
