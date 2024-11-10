@@ -28,7 +28,9 @@ if (typeof observer === "undefined") {
   }
 
   function hideElement(element) {
-    element.nextElementSibling.style.display = "none";
+    if (element.nextElementSibling) {
+      element.nextElementSibling.style.display = "none";
+    } 
     element.style.display = "none";
     element.firstElementChild.style.display = "none";
   }
