@@ -1,3 +1,3 @@
 # ApartmentExtension
 
-An extension for finding apartments.
+A browser extension for finding apartments.
