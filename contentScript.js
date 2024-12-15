@@ -1,3 +1,5 @@
+// TODO Try to improve performance. The script runs too often.
+
 console.log("contentScript.js loaded");
 
 if (typeof observer === "undefined") {
@@ -22,8 +24,17 @@ if (typeof observer === "undefined") {
           if (isApartmentInNeedOfRenovation(text)) {
               card.firstElementChild.style.border = "5px solid red"; 
           } else {
-              hideElement(card);
-          }
+            // console.log("NO renovation");
+
+            chrome.storage.local.get(["isChecked"], (result) => {
+                // console.log("Value is " + result.isChecked);  
+            
+                if (result.isChecked) {
+                    hideElement(card);
+                }
+            });
+
+        }
       }
   }
 
